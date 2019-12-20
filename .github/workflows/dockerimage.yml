@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Login to registry
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build the 2.9.2 image
+      run: docker build . --no-cache --build-arg ANSIBLE_VERSION=2.9.2 --file Dockerfile --tag anatomicjc/ansible-docker:2.9.2 --tag anatomicjc/ansible-docker:latest
+    - name: Push 2.9.2 image
+      run: docker push anatomicjc/ansible-docker
+    - name: Build the 2.7.12 image
+      run: docker build . --no-cache --build-arg ANSIBLE_VERSION=2.7.12 --file Dockerfile --tag anatomicjc/ansible-docker:2.7.12
+    - name: Push 2.7.12 image
+      run: docker push anatomicjc/ansible-docker

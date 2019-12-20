@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+if [ "$#" -gt 0 ]
+then
+  DOCKER_IMAGE_PARAMS="cd ansible-devel && ${@}"
+else
+  TTY="t"
+  DOCKER_IMAGE_PARAMS="zsh"
+fi
+
+if [ -z "$SSH_AUTH_SOCK" ] ; then eval `ssh-agent -s` ssh-add; fi
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+. ${SCRIPT_DIR}/secrets.conf
+
+docker run --rm -i${TTY} \
+  --env SSH_AUTH_SOCK=/ssh-agent \
+  --env ANSIBLE_VAULT_PASSWORD_FILE=/home/ansible/.vault_pass \
+  -v "${SSH_AUTH_SOCK}:/ssh-agent" \
+  -v "${VAULT_FILE}:/home/ansible/.vault_pass" \
+  -v "${SSH_PRIVATE_FILE:-${HOME}/.ssh/id_ed25519}:/home/ansible/.ssh/id_ed25519" \
+  -v "${HOME}/.ssh/config:/home/ansible/.ssh/config" \
+  -v "${HOME}/.ssh/config.d:/home/ansible/.ssh/config.d" \
+  -v "${HOME}/.ssh/known_hosts:/home/ansible/.ssh/known_hosts" \
+  -v "${ZSH_HISTORY_FILE:-${HOME}/.zsh_history}:/home/ansible/.zsh_history" \
+  -v "${ANSIBLE_REPOSITORY_PATH:-$(pwd)}:/home/ansible/ansible-devel" \
+  -v "${CUSTOM_SSH_CONFIG_PATH}:/home/ansible/ssh-config/ssh_config_custom" \
+  --entrypoint "/bin/zsh" \
+  ${DOCKER_IMAGE:-ansible:2.7.12} -c "${DOCKER_IMAGE_PARAMS}"
