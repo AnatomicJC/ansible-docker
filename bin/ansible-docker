@@ -14,6 +14,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 . ${SCRIPT_DIR}/secrets.conf
 
+docker pull ${DOCKER_IMAGE:-anatomicjc/ansible-docker:latest}
+
 docker run --rm -i${TTY} \
   --env SSH_AUTH_SOCK=/ssh-agent \
   --env ANSIBLE_VAULT_PASSWORD_FILE=/home/ansible/.vault_pass \
@@ -27,4 +29,4 @@ docker run --rm -i${TTY} \
   -v "${ANSIBLE_REPOSITORY_PATH:-$(pwd)}:/home/ansible/ansible-devel" \
   -v "${CUSTOM_SSH_CONFIG_PATH}:/home/ansible/ssh-config/ssh_config_custom" \
   --entrypoint "/bin/zsh" \
-  ${DOCKER_IMAGE:-ansible:2.7.12} -c "${DOCKER_IMAGE_PARAMS}"
+  ${DOCKER_IMAGE:-anatomicjc/ansible-docker:latest} -c "${DOCKER_IMAGE_PARAMS}"
