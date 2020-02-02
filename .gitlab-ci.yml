@@ -2,6 +2,9 @@ include:
   - project: 'AnatomicJC/gitlab-ci-templates'
     file: '/docker-hub.yml'
 
+stages:
+  - publish
+
 variables:
   DOCKER_IMAGE: anatomicjc/ansible-docker
 
