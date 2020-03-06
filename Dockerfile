@@ -1,6 +1,6 @@
 FROM python:3.7-alpine as build
 
-ARG ANSIBLE_VERSION=2.9.1
+ARG ANSIBLE_VERSION=2.9.6
 # Inspired from https://github.com/William-Yeh/docker-ansible
 
 RUN apk upgrade --no-cache \
