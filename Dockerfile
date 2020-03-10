@@ -1,12 +1,11 @@
-FROM python:3.7-alpine as build
+FROM python:3.7-slim-buster as build
 
 ARG ANSIBLE_VERSION=2.9.6
 # Inspired from https://github.com/William-Yeh/docker-ansible
 
-RUN apk upgrade --no-cache \
+RUN apt-get update && apt-get -y upgrade \
  && echo "===> Installing sudo to emulate normal OS behavior..." \
- && apk --update add sudo \
- && apk --update add --virtual build-dependencies python3-dev libffi-dev openssl-dev build-base \
+ && apt-get install -y sudo python3-dev libffi-dev libssl-dev gcc \
  && pip3 install --user --upgrade pip cffi \
  && echo "===> Installing Ansible..." \
  && pip3 install --user ansible==${ANSIBLE_VERSION} ansible-lint \
@@ -14,30 +13,26 @@ RUN apk upgrade --no-cache \
  && pip3 install --user --upgrade pycrypto pywinrm \
  && pip3 install --user --upgrade pyotp \
  # this for kubespray
- && pip3 install --user --upgrade netaddr pbr hvac jmespath \
- && echo "===> Removing package list..." \
- && apk del build-dependencies \
- && rm -rf /var/cache/apk/* \
- && echo "===> Adding hosts for convenience..." \
- && mkdir -p /etc/ansible \
- && echo 'localhost' > /etc/ansible/hosts
+ && pip3 install --user --upgrade netaddr pbr hvac jmespath
 
 RUN find /root/.local -name "*pyc" \
                    -o -name "*pyo" \
                    -o -name "*dist-info" \
                    -o -name "tests" | xargs rm -rf
-FROM python:3.7-alpine
 
-RUN adduser -D -u 1000 ansible
+FROM python:3.7-slim-buster
+
+RUN groupadd --gid 1000 ansible \
+  && useradd --uid 1000 --gid ansible --shell /bin/bash --create-home ansible
 
 COPY --from=build --chown=ansible:ansible /root/.local/ /home/ansible/.local/
 COPY --chown=ansible:ansible zshrc /home/ansible/.zshrc
 
-RUN apk upgrade --no-cache \
+RUN apt-get update && apt-get -y upgrade \
  && mkdir -p /etc/ansible \
  && mkdir -p /home/ansible/.ssh/sockets \
  && chown -R ansible:ansible /home/ansible/.ssh \
- && apk add sshpass openssh-client rsync zsh bash git curl unzip tar \
+ && apt-get install -y --no-install-recommends sshpass openssh-client rsync zsh bash git curl wget unzip tar \
  && echo 'localhost' > /etc/ansible/hosts \
  && wget https://github.com/robbyrussell/oh-my-zsh/archive/master.zip \
  && unzip master.zip \
@@ -49,7 +44,8 @@ RUN apk upgrade --no-cache \
  && rm master.zip \
  && chown -R ansible:ansible /home/ansible/.oh-my-zsh \
  && find /home/ansible/.oh-my-zsh -type d | xargs chmod 755 \
- && find /home/ansible/.oh-my-zsh -type f -name "*md" | xargs rm
+ && find /home/ansible/.oh-my-zsh -type f -name "*md" | xargs rm \
+ && apt-get clean
 
 USER ansible
 WORKDIR /home/ansible
