@@ -1,6 +1,6 @@
-FROM python:3.7-alpine as build
+FROM python:3.8-alpine as build
 
-ARG ANSIBLE_VERSION=2.9.6
+ARG ANSIBLE_VERSION=2.9.7
 # Inspired from https://github.com/William-Yeh/docker-ansible
 
 RUN apk upgrade --no-cache \
@@ -26,7 +26,7 @@ RUN find /root/.local -name "*pyc" \
                    -o -name "*pyo" \
                    -o -name "*dist-info" \
                    -o -name "tests" | xargs rm -rf
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 
 RUN adduser -D -u 1000 ansible
 
