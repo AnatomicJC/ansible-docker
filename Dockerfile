@@ -50,7 +50,8 @@ RUN apk upgrade --no-cache \
  && chown -R ansible:ansible /home/ansible/.oh-my-zsh \
  && find /home/ansible/.oh-my-zsh -type d | xargs chmod 755 \
  && find /home/ansible/.oh-my-zsh -type f -name "*md" | xargs rm \
- && echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
+ && echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible \
+ && echo "Set disable_coredump false" >> /etc/sudo.conf
 
 USER ansible
 WORKDIR /home/ansible
