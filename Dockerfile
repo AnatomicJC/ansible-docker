@@ -37,7 +37,7 @@ RUN apk upgrade --no-cache \
  && mkdir -p /etc/ansible \
  && mkdir -p /home/ansible/.ssh/sockets \
  && chown -R ansible:ansible /home/ansible/.ssh \
- && apk add sshpass openssh-client rsync zsh bash git curl unzip tar \
+ && apk add sshpass openssh-client rsync zsh bash git curl unzip tar sudo \
  && echo 'localhost' > /etc/ansible/hosts \
  && wget https://github.com/robbyrussell/oh-my-zsh/archive/master.zip \
  && unzip master.zip \
@@ -49,7 +49,8 @@ RUN apk upgrade --no-cache \
  && rm master.zip \
  && chown -R ansible:ansible /home/ansible/.oh-my-zsh \
  && find /home/ansible/.oh-my-zsh -type d | xargs chmod 755 \
- && find /home/ansible/.oh-my-zsh -type f -name "*md" | xargs rm
+ && find /home/ansible/.oh-my-zsh -type f -name "*md" | xargs rm \
+ && echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
 
 USER ansible
 WORKDIR /home/ansible
