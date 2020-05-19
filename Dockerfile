@@ -37,7 +37,7 @@ RUN apk upgrade --no-cache \
  && mkdir -p /etc/ansible \
  && mkdir -p /home/ansible/.ssh/sockets \
  && chown -R ansible:ansible /home/ansible/.ssh \
- && apk add sshpass openssh-client rsync zsh bash git curl unzip tar sudo \
+ && apk add sshpass openssh-client rsync zsh bash git curl unzip tar sudo wget \
  && echo 'localhost' > /etc/ansible/hosts \
  && wget https://github.com/robbyrussell/oh-my-zsh/archive/master.zip \
  && unzip master.zip \
