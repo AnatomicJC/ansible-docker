@@ -8,9 +8,9 @@ stages:
 variables:
   DOCKER_IMAGE: anatomicjc/ansible-docker
 
-docker-publish-2.9.7:
+docker-publish-2.9.12:
   extends: .docker-hub-publish
   variables:
-    DOCKER_VERSION: 2.9.7
+    DOCKER_VERSION: 2.9.12
     DOCKER_LATEST_TAG: "true"
-    DOCKER_BUILD_ARGS: --build-arg ANSIBLE_VERSION=2.9.7
+    DOCKER_BUILD_ARGS: --build-arg ANSIBLE_VERSION=2.9.12
