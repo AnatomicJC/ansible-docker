@@ -22,6 +22,7 @@ docker run --rm -i${TTY} \
   -v "${SSH_AUTH_SOCK}:/ssh-agent" \
   -v "${VAULT_FILE}:/home/ansible/.vault_pass" \
   -v "${SSH_PRIVATE_FILE:-${HOME}/.ssh/id_ed25519}:/home/ansible/.ssh/id_ed25519" \
+  -v "${HOME}/.ansible:/home/ansible/.ansible" \
   -v "${HOME}/.ssh/config:/home/ansible/.ssh/config" \
   -v "${HOME}/.ssh/config.d:/home/ansible/.ssh/config.d" \
   -v "${HOME}/.ssh/known_hosts:/home/ansible/.ssh/known_hosts" \
